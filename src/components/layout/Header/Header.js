@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import PropTypes from 'prop-types';
 
 import clsx from 'clsx';
@@ -20,7 +20,7 @@ import { Button } from '@material-ui/core';
 import styles from './Header.module.scss';
 import { makeStyles } from '@material-ui/core';
 import AssignmentLateSharpIcon from '@material-ui/icons/AssignmentLateSharp';
-
+import SpeakerNotesSharpIcon from '@material-ui/icons/SpeakerNotesSharp';
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -30,12 +30,13 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     flexGrow: 1,
+    textTransform: 'uppercase',
   },
 }));
 
 const Component = ({className, children}) => {
   const classes = useStyles();
-  const [login, setLogin] = React.useState();
+  const [login, setLogin] = useState();
   const handleChange = (event) => {
     setLogin(event.target.checked);
   };
@@ -44,7 +45,7 @@ const Component = ({className, children}) => {
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h5" className={classes.title}>
-            Your local notice board
+            notice board <SpeakerNotesSharpIcon />
           </Typography>
           <FormControlLabel
             control={
