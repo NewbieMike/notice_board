@@ -14,7 +14,7 @@ import styles from './Post.module.scss';
 import { Button } from '@material-ui/core';
 
 
-const Component = ({className, announcment}) => {
+const Component = ({className, announcment, userStatus}) => {
   
   return (
     <div className={clsx(className, styles.root)}>
@@ -32,6 +32,13 @@ const Component = ({className, announcment}) => {
           <Button className={styles.btn} variant="contained" color="primary" href='/'><EmailIcon /> {announcment.email}</Button>
           {/* eslint-disable-next-line no-template-curly-in-string */}
           <Button className={styles.btn} variant="contained" color="primary" href={`tel:${announcment.phone}`}><PhoneIcon /> {announcment.phone}</Button>
+        </Grid>
+        <Grid item xs={12}>
+          {!userStatus ? 
+            <Button variant="contained" color="primary" href={`/post/${announcment.id}/edit`}>Edit Announcment</Button> 
+            : 
+            ''
+          }
         </Grid>
       </Grid>
     </div>
