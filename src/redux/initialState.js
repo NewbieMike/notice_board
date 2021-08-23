@@ -1,4 +1,7 @@
 export const initialState = {
+  user: {
+    active: true,
+  },
   posts: {
     data: [
       {

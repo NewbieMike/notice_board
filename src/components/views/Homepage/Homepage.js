@@ -5,14 +5,14 @@ import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import clsx from 'clsx';
 import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
+import { CardActionArea } from '@material-ui/core';
 import { CardMedia } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { connect } from 'react-redux';
 import { getAll } from '../../../redux/postsRedux';
-
+import { getStatus } from '../../../redux/userRedux.js';
 import styles from './Homepage.module.scss';
 
 const useStyles = makeStyles((theme) => ({
@@ -22,13 +22,13 @@ const useStyles = makeStyles((theme) => ({
   title: {
     padding: theme.spacing(1),
     textAlign: 'center',
-    color: theme.palette.text.secondary,
+    color: theme.palette.text.primary,
   },
   announcmentBox: {
     padding: theme.spacing(1),
   },
   media: {
-    height: 0,
+    height: '300px',
     paddingTop: '56.25%', // 16:9
   },
   addButton: {
@@ -37,15 +37,19 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '18px',
     backgroundColor: 'green',
   },
+  btn: {
+    display: 'flex',
+    margin: '5px 0px',
+  },
 }));
 
-const Component = ({className, announcments}) => {
+const Component = ({className, announcments, userStatus}) => {
   const classes = useStyles();
-  const [login, setLogin] = useState(false);
+  // const [login, setLogin] = useState(false);
   return (
     <div className={clsx(className, styles.root)}>
-      {!login ? '' :
-        <Button variant="contained" color="primary" className={classes.addButton} href="#contained-buttons">
+      {!userStatus ? '' :
+        <Button variant="contained" color="primary" className={classes.addButton} href="/post/add/">
           Add new announcment
         </Button>
       }
@@ -55,10 +59,10 @@ const Component = ({className, announcments}) => {
             <Grid container item xs={12} md={4} key={announcment.id} className={classes.announcmentBox}>
               <Card className={classes.root}>
                 <CardContent>
-                  <Typography className={classes.title} color="textSecondary" gutterBottom>
+                  <Typography className={classes.info} color="textSecondary" gutterBottom>
                     {announcment.name} / {announcment.addDate}
                   </Typography>
-                  <Typography variant="h5" component="h2" >
+                  <Typography variant="h5" component="h2" className={classes.title}>
                     {announcment.title}
                   </Typography>
                   <Typography className={classes.pos} color="textSecondary">
@@ -71,7 +75,9 @@ const Component = ({className, announcments}) => {
                     className={classes.media}
                     image={announcment.img}
                     title={announcment.title} />
+                  <Button href={`/post/${announcment.id}`} variant="contained" color="primary" className={classes.btn}>See Announcment</Button>
                 </CardContent>
+                
               </Card>
             </Grid>
           ) )
@@ -85,6 +91,7 @@ const Component = ({className, announcments}) => {
 
 Component.propTypes = {
   className: PropTypes.string,
+  userStatus: PropTypes.node,
   announcments: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.number,
@@ -102,6 +109,7 @@ Component.propTypes = {
 
 const mapStateToProps = state => ({
   announcments: getAll(state),
+  userStatus: getStatus(state),
 });
 
 // const mapDispatchToProps = dispatch => ({

@@ -1,20 +1,13 @@
-import React, {useState} from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
 import clsx from 'clsx';
 
-// import { connect } from 'react-redux';
-// import { reduxSelector, reduxActionCreator } from '../../../redux/exampleRedux.js';
+import { connect } from 'react-redux';
+import { getStatus } from '../../../redux/userRedux';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
-// import HomeIcon from '@material-ui/icons/Home';
-// import { green } from '@material-ui/core/colors';
-// import AccountCircle from '@material-ui/icons/AccountCircle';
-import Switch from '@material-ui/core/Switch';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-// import FormGroup from '@material-ui/core/FormGroup';
 import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
 import { Button } from '@material-ui/core';
 import styles from './Header.module.scss';
@@ -34,36 +27,36 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Component = ({className, children}) => {
+const Component = ({className, children, userStatus}) => {
   const classes = useStyles();
-  const [login, setLogin] = useState();
-  const handleChange = (event) => {
-    setLogin(event.target.checked);
-  };
+  // const [login, setLogin] = useState();
+  // const handleChange = (event) => {
+  //   setLogin(event.target.checked);
+  // };
   return (
     <div className={clsx(className, styles.root)}>
       <AppBar position="static">
         <Toolbar>
-          <Typography variant="h5" className={classes.title}>
+          <Typography variant="h5" className={classes.title} href='/'>
             notice board <SpeakerNotesSharpIcon />
           </Typography>
-          <FormControlLabel
+          {/* <FormControlLabel
             control={
               <Switch
-                checked={login}
+                checked={userStatus}
                 onChange={handleChange}
                 aria-label='login switch'
               />
             }
-            label={login ? 'Logout' : 'Login'}
-          />
-          {!login ? '' : 
+            label={userStatus ? 'Logout' : 'Login'}
+          /> */}
+          {!userStatus ? '' : 
             <Button edge="start" className={classes.menuButton} color="inherit" aria-label="menu" href='/'>
              My Announcements <AssignmentLateSharpIcon/>
             </Button>
           }
 
-          {!login ? 
+          {!userStatus ? 
             <Button color="inherit" href='https://google.com'>Login <MeetingRoomIcon /></Button> : <Button color="inherit" href='/'>Logout <MeetingRoomIcon /></Button>
           }
           
@@ -78,20 +71,21 @@ const Component = ({className, children}) => {
 Component.propTypes = {
   children: PropTypes.node,
   className: PropTypes.string,
+  userStatus: PropTypes.node,
 };
 
-// const mapStateToProps = state => ({
-//   someProp: reduxSelector(state),
-// });
+const mapStateToProps = state => ({
+  userStatus: getStatus(state),
+});
 
 // const mapDispatchToProps = dispatch => ({
 //   someAction: arg => dispatch(reduxActionCreator(arg)),
 // });
 
-// const Container = connect(mapStateToProps, mapDispatchToProps)(Component);
+const Container = connect(mapStateToProps)(Component);
 
 export {
-  Component as Header,
-  // Container as Header,
+  // Component as Header,
+  Container as Header,
   Component as HeaderComponent,
 };
