@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getStatus } from '../../../redux/userRedux.js';
-import { makeStyles } from '@material-ui/core/styles';
+import { fetchAdd } from '../../../redux/postsRedux';
 import TextField from '@material-ui/core/TextField';
 import { Button } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
@@ -11,87 +11,69 @@ import clsx from 'clsx';
 import styles from './PostAdd.module.scss';
 import { NotFound } from '../NotFound/NotFound';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    '& > *': {
-      margin: theme.spacing(1),
-      width: '25ch',
-    },
-  },
-}));
+
 
 class Component extends React.Component {
   state = {
-    announcment: {
-      id: '',
-      name: '',
+    post: {
       title: '',
-      content: '',
-      addDate: '',
-      email: '',
+      author: '',
+      created: '',
+      updated: '',
+      status: '',
+      text: '',
+      photo: '',
+      price: '',
       phone: '',
       location: '',
-      img: '',
     },
     className: '',
   };
-  handleChange = (event) => {
-    const { announcment } = this.state;
-
+  handleChange = ({target}) => {
+    const { post } = this.state;
+    const { name, value } = target;
+    // console.log([name], value);
     this.setState({
-      announcment: { ...announcment, [event.target.name]: event.target.value },
+      post: { ...post, [name]: value },
     });
   };
   submitForm = (event) => {
-    const {announcment} = this.state;
     event.preventDefault();
+    const { post } = this.state;
+    const { addPost } = this.props;
+    const postDate = new Date().toISOString();
 
-    const announcmentDate = new Date().toISOString();
-    console.log(announcmentDate);
-
-    this.setState({
-      announcment: {
-        id: '',
-        name: '',
-        title: '',
-        content: '',
-        addDate: '',
-        email: '',
-        phone: '',
-        location: '',
-        img: '',
-      },
-    });
-    alert ('Announcment added!');
+    this.setState({ post: { ...post,  created: postDate } });
+    addPost(this.state.post);
+    alert ('post added!');
   };
 
   render() {
-
+    const { handleChange, submitForm } = this;
     const { className, userStatus } = this.props;
-    const { announcments } = this.state;
     return (
       <div className={clsx(className, styles.root)}> 
         {userStatus === true ? 
           (
             <Grid container >
               <Grid item xs={12}>
-                <h1>Add new announcment!</h1>
+                <h1>Add new post!</h1>
               </Grid>
-              <form className={clsx(className, styles.root)} noValidate autoComplete="off">
+              <form className={clsx(className, styles.root)} noValidate autoComplete="off" onSubmit={submitForm}>
                 <Grid item xs={12}>
-                  <TextField id="standard-basic" label="Title" onChange={this.handleChange}/>
+                  <TextField name='title' id="standard-basic" label="Title" onChange={handleChange}/>
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField id="standard-basic" label="Location" onChange={this.handleChange}/>
+                  <TextField name='location' id="standard-basic" label="Location" onChange={handleChange}/>
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField id="standard-basic" label="Email" onChange={this.handleChange}/>
+                  <TextField name='author' id="standard-basic" label="Email" onChange={handleChange}/>
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField id="standard-basic" label="Phone" onChange={this.handleChange}/>
+                  <TextField name='phone' id="standard-basic" label="Phone" onChange={handleChange}/>
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField id="standard-basic" label="Content" onChange={this.handleChange}/>
+                  <TextField name='text' id="standard-basic" label="Content" onChange={handleChange}/>
                 </Grid>
                 <Button variant='contained' type='submit' color='primary'>
                       Submit Ammouncment
@@ -113,17 +95,18 @@ Component.propTypes = {
   children: PropTypes.node,
   className: PropTypes.string,
   userStatus: PropTypes.node,
+  addPost: PropTypes.func,
 };
 
 const mapStateToProps = (state, props) => ({
   userStatus: getStatus(state),
 });
 
-// const mapDispatchToProps = dispatch => ({
-//   someAction: arg => dispatch(reduxActionCreator(arg)),
-// });
+const mapDispatchToProps = (dispatch) => ({
+  addPost: (post) => dispatch(fetchAdd(post)),
+});
 
-const Container = connect(mapStateToProps)(Component);
+const Container = connect(mapStateToProps, mapDispatchToProps)(Component);
 
 export {
   // Component as PostAdd,

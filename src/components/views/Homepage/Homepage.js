@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -6,13 +6,14 @@ import Grid from '@material-ui/core/Grid';
 import clsx from 'clsx';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
-import { CardActionArea } from '@material-ui/core';
-import { CardMedia } from '@material-ui/core';
+
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { connect } from 'react-redux';
-import { getAll } from '../../../redux/postsRedux';
+
+import { getAll, fetchPublished } from '../../../redux/postsRedux';
 import { getStatus } from '../../../redux/userRedux.js';
+
 import styles from './Homepage.module.scss';
 
 const useStyles = makeStyles((theme) => ({
@@ -24,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center',
     color: theme.palette.text.primary,
   },
-  announcmentBox: {
+  postBox: {
     padding: theme.spacing(1),
   },
   media: {
@@ -43,39 +44,42 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Component = ({className, announcments, userStatus}) => {
+const Component = ({className, posts, userStatus}) => {
   const classes = useStyles();
   // const [login, setLogin] = useState(false);
+
+  
+
   return (
     <div className={clsx(className, styles.root)}>
       {!userStatus ? '' :
-        <Button variant="contained" color="primary" className={classes.addButton} href="/post/add/">
-          Add new announcment
+        <Button variant="contained" color="primary" className={classes.addButton} href="/posts/add/">
+          Add new post
         </Button>
       }
       <div className={classes.root}>
         <Grid container>
-          {announcments.map((announcment) =>(
-            <Grid container item xs={12} md={4} key={announcment.id} className={classes.announcmentBox}>
+          {posts.map((post) =>(
+            <Grid container item xs={12} md={4} key={post.id} className={classes.postBox}>
               <Card className={classes.root}>
                 <CardContent>
                   <Typography className={classes.info} color="textSecondary" gutterBottom>
-                    {announcment.name} / {announcment.addDate}
+                    {post.status} / {post.created}
                   </Typography>
                   <Typography variant="h5" component="h2" className={classes.title}>
-                    {announcment.title}
+                    {post.title}
                   </Typography>
                   <Typography className={classes.pos} color="textSecondary">
-                    {announcment.email}, {announcment.phone}
+                    {post.author}
                   </Typography>
                   <Typography variant="body2" component="p">
-                    {announcment.content}
+                    {post.text}
                   </Typography>
-                  <CardMedia 
+                  {/* <CardMedia 
                     className={classes.media}
-                    image={announcment.img}
-                    title={announcment.title} />
-                  <Button href={`/post/${announcment.id}`} variant="contained" color="primary" className={classes.btn}>See Announcment</Button>
+                    image={post.img}
+                    title={post.title} /> */}
+                  <Button href={`/posts/${post._id}`} variant="contained" color="primary" className={classes.btn}>See post</Button>
                 </CardContent>
                 
               </Card>
@@ -92,31 +96,36 @@ const Component = ({className, announcments, userStatus}) => {
 Component.propTypes = {
   className: PropTypes.string,
   userStatus: PropTypes.node,
-  announcments: PropTypes.arrayOf(
+  fetchPublishedPosts: PropTypes.node,
+  posts: PropTypes.arrayOf(
     PropTypes.shape({
-      id: PropTypes.number,
-      name: PropTypes.string,
-      title: PropTypes.string,
-      content: PropTypes.string,
-      addDate: PropTypes.string,
-      email: PropTypes.string,
-      phone: PropTypes.string,
-      location: PropTypes.string,
+      id: PropTypes.node,
+      title: PropTypes.node,
+      text: PropTypes.node,
+      author: PropTypes.node,
+      created: PropTypes.node,
+      updated: PropTypes.node,
+      status: PropTypes.node,
+      photo: PropTypes.node,
+      price: PropTypes.node,
+      phone: PropTypes.node,
+      location: PropTypes.node,
+      __v: PropTypes.node,
     })
   ),
 };
 
 
 const mapStateToProps = state => ({
-  announcments: getAll(state),
+  posts: getAll(state),
   userStatus: getStatus(state),
 });
 
-// const mapDispatchToProps = dispatch => ({
-//   someAction: arg => dispatch(reduxActionCreator(arg)),
-// });
+const mapDispatchToProps = (dispatch) => ({
+  fetchPublishedPosts: () => dispatch(fetchPublished()),
+});
 
-const Container = connect(mapStateToProps)(Component);
+const Container = connect(mapStateToProps, mapDispatchToProps)(Component);
 
 export {
   // Component as Homepage,

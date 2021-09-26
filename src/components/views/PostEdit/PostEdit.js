@@ -6,7 +6,7 @@ import TextField from '@material-ui/core/TextField';
 import { Button } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
 import { connect } from 'react-redux';
-import { getAll, getOne } from '../../../redux/postsRedux';
+import { getAll, getPost } from '../../../redux/postsRedux';
 import {getStatus} from '../../../redux/userRedux';
 import { NotFound } from '../NotFound/NotFound.js';
 import styles from './PostEdit.module.scss';
@@ -15,31 +15,31 @@ import styles from './PostEdit.module.scss';
 class Component extends React.Component {
 
   render(){
-    const { className, announcment, userStatus } = this.props;
-    console.log(announcment);
+    const { className, post, userStatus } = this.props;
+    console.log(post);
     return (
       <div className={clsx(className, styles.root)}>
         {userStatus === true ? 
           (
             <Grid container >
               <Grid item xs={12}>
-                <h1>Edit announcment!</h1>
+                <h1>Edit post!</h1>
               </Grid>
               <form className={clsx(className, styles.root)} noValidate autoComplete="off">
                 <Grid item xs={12}>
-                  <TextField className={styles.input} id="standard-basic" label="Title"  defaultValue={announcment.title}/>
+                  <TextField className={styles.input} id="standard-basic" label="Title"  defaultValue={post.title}/>
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField id="standard-basic" label="Location"  defaultValue={announcment.location}/>
+                  <TextField id="standard-basic" label="Location"  defaultValue={post.location}/>
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField id="standard-basic" label="Email"  defaultValue={announcment.email}/>
+                  <TextField id="standard-basic" label="Email"  defaultValue={post.email}/>
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField id="standard-basic" label="Phone"  defaultValue={announcment.phone}/>
+                  <TextField id="standard-basic" label="Phone"  defaultValue={post.phone}/>
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField id="standard-basic" label="Content"  defaultValue={announcment.content}/>
+                  <TextField id="standard-basic" label="Content"  defaultValue={post.content}/>
                 </Grid>
                 <Button variant='contained' type='submit' color='primary'>
                       Save changes
@@ -61,7 +61,7 @@ class Component extends React.Component {
 Component.propTypes = {
   params: PropTypes.object,
   userStatus: PropTypes.node,
-  announcment: PropTypes.arrayOf(
+  post: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.number,
       name: PropTypes.string,
@@ -78,7 +78,7 @@ Component.propTypes = {
 
 const mapStateToProps = (state, props) => ({
   postsAll: getAll(state),
-  announcment: getOne(state, props.match.params.id),
+  post: getPost(state, props.match.params.id),
   userStatus: getStatus(state),
 });
 
